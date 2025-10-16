@@ -1,18 +1,10 @@
+import Hero from "../components/Hero";
+
 export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#1a1464] to-[#252080] text-white py-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-5xl font-bold mb-6">Welcome to Nukoo Constructions</h1>
-          <p className="text-xl mb-8 max-w-2xl">
-            Building dreams into reality with quality construction and real estate services in Oyarifa and beyond.
-          </p>
-          <button className="bg-white text-[#1a1464] px-8 py-3 rounded-md font-semibold hover:bg-gray-100 transition-colors">
-            Explore Properties
-          </button>
-        </div>
-      </section>
+      <Hero />
 
       {/* Content Section */}
       <section className="max-w-7xl mx-auto px-4 py-16">
