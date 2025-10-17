@@ -1,8 +1,9 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useState } from "react";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   const navLinks = [
     { name: "Home", path: "/" },
@@ -62,21 +63,28 @@ export default function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className="text-gray-700 hover:text-[#1a1464] font-medium transition-colors"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = location.pathname === link.path;
+                return (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`font-medium transition-colors ${
+                      isActive 
+                        ? "text-[#1a1464] border-b-2 border-[#1a1464] pb-1" 
+                        : "text-gray-700 hover:text-[#1a1464]"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
             </div>
 
             {/* Get Started Button */}
             <div className="hidden md:block">
               <Link
-                to="/get-started"
+                to="/properties"
                 className="bg-[#1a1464] text-white px-6 py-2.5 rounded-md hover:bg-[#252080] transition-colors font-medium"
               >
                 Get Started
@@ -120,16 +128,23 @@ export default function Navbar() {
           {isMobileMenuOpen && (
             <div className="md:hidden py-4 border-t">
               <div className="flex flex-col space-y-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    className="text-gray-700 hover:text-[#1a1464] font-medium transition-colors px-2"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
+                {navLinks.map((link) => {
+                  const isActive = location.pathname === link.path;
+                  return (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className={`font-medium transition-colors px-2 py-2 rounded-md ${
+                        isActive 
+                          ? "text-[#1a1464] bg-blue-50" 
+                          : "text-gray-700 hover:text-[#1a1464] hover:bg-gray-50"
+                      }`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {link.name}
+                    </Link>
+                  );
+                })}
                 <Link
                   to="/get-started"
                   className="bg-[#1a1464] text-white px-6 py-2.5 rounded-md hover:bg-[#252080] transition-colors font-medium text-center"

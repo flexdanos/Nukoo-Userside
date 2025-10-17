@@ -12,6 +12,7 @@ interface WhyChooseUsServicesProps {
   imageAlt?: string;
   statsNumber?: string;
   statsLabel?: string;
+  showStatsOverlay?: boolean;
 }
 
 const defaultBenefits: Benefit[] = [
@@ -39,7 +40,8 @@ export default function WhyChooseUsServices({
   image = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1200&auto=format&fit=crop",
   imageAlt = "Modern house for sale",
   statsNumber = "500+",
-  statsLabel = "Projects Completed"
+  statsLabel = "Projects Completed",
+  showStatsOverlay = true
 }: WhyChooseUsServicesProps) {
   return (
     <section className="py-16 bg-white">
@@ -80,17 +82,19 @@ export default function WhyChooseUsServices({
                 className="w-full h-[500px] object-cover"
               />
 
-              {/* Stats Overlay */}
-              <div className="absolute bottom-6 left-1">
-                <div className="bg-[#28243D] bg-opacity-95 px-4 py-3 rounded-lg">
-                  <div className="text-2xl font-bold text-orange-500">
-                    {statsNumber}
-                  </div>
-                  <div className="text-sm text-white">
-                    {statsLabel}
+              {/* Stats Overlay - only show if showStatsOverlay is true */}
+              {showStatsOverlay && (
+                <div className="absolute bottom-6 left-1">
+                  <div className="bg-[#28243D] bg-opacity-95 px-4 py-3 rounded-lg">
+                    <div className="text-2xl font-bold text-orange-500">
+                      {statsNumber}
+                    </div>
+                    <div className="text-sm text-white">
+                      {statsLabel}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
