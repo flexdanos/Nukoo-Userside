@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import PropertyCard from "./PropertyCard";
 import PropertyFilters from "./PropertyFilters";
 import PropertyDetails from "./PropertyDetails";
-import PropertiesHero from "./PropertiesHero";
+import PageHero from "./PageHero";
 import PropertyCTA from "./PropertyCTA";
 
 interface Property {
@@ -240,7 +240,12 @@ export default function PropertyListing() {
 
   return (
     <>
-      <PropertiesHero />
+      <PageHero 
+        title="Discover Premium Properties"
+        subtitle="Browse our extensive collection of residential, commercial, and land properties"
+        backgroundImage="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=1200&auto=format&fit=crop"
+        backgroundImageAlt="Classic house rooftops and architectural details"
+      />
       <div className="bg-gray-50 min-h-screen">
         {/* Filters */}
         <PropertyFilters
