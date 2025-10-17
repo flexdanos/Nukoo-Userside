@@ -1,15 +1,34 @@
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { useState, useCallback } from "react";
+import { ChevronDown, Search } from "lucide-react";
 
 export default function Hero() {
   const [location, setLocation] = useState("");
   const [propertyType, setPropertyType] = useState("");
   const [priceRange, setPriceRange] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleGetStarted = () => {
-    console.log({ location, propertyType, priceRange });
-    // Add your search logic here
-  };
+  const handleGetStarted = useCallback(async () => {
+    setError("");
+    
+    if (!location || !propertyType || !priceRange) {
+      setError("Please fill in all fields to continue");
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log({ location, propertyType, priceRange });
+      // Add your search logic here
+    } catch (error) {
+      console.error("Search failed:", error);
+      setError("Search failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [location, propertyType, priceRange]);
 
   return (
     <section className="relative h-[700px] sm:h-[650px] md:h-[600px] w-full overflow-hidden">
@@ -17,8 +36,10 @@ export default function Hero() {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=2070&auto=format&fit=crop')`,
+          backgroundImage: `url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=1200&auto=format&fit=crop')`,
         }}
+        role="img"
+        aria-label="Modern house exterior with for sale sign"
       >
         <div className="absolute inset-0 bg-black/50" />
       </div>
@@ -34,14 +55,25 @@ export default function Hero() {
         </p>
 
         {/* Search Form */}
-        <div className="w-full max-w-4xl rounded-xl sm:rounded-2xl bg-white p-4 sm:p-5 md:p-6 shadow-2xl">
+        <div className="w-full max-w-4xl rounded-xl sm:rounded-2xl bg-white/95 backdrop-blur-sm p-4 sm:p-5 md:p-6 shadow-2xl">
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              {error}
+            </div>
+          )}
           <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-4">
             {/* Location Dropdown */}
             <div className="relative">
+              <label htmlFor="location-dropdown" className="sr-only">
+                Choose a location
+              </label>
               <select
+                id="location-dropdown"
+                aria-label="Choose a location"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 sm:px-4 py-2.5 sm:py-3 pr-10 text-sm sm:text-base text-gray-700 focus:border-[#1a1464] focus:outline-none focus:ring-2 focus:ring-[#1a1464]/20"
+                onKeyDown={(e) => e.key === 'Enter' && handleGetStarted()}
+                className="w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 sm:px-4 py-2.5 sm:py-3 pr-10 text-sm sm:text-base text-gray-700 focus:border-[#1a1464] focus:outline-none focus:ring-2 focus:ring-[#1a1464]/20 transition-colors"
               >
                 <option value="">Location</option>
                 <option value="oyarifa">Oyarifa</option>
@@ -55,10 +87,16 @@ export default function Hero() {
 
             {/* Property Type Dropdown */}
             <div className="relative">
+              <label htmlFor="property-type-dropdown" className="sr-only">
+                Choose a property type
+              </label>
               <select
+                id="property-type-dropdown"
+                aria-label="Choose a property type"
                 value={propertyType}
                 onChange={(e) => setPropertyType(e.target.value)}
-                className="w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 sm:px-4 py-2.5 sm:py-3 pr-10 text-sm sm:text-base text-gray-700 focus:border-[#1a1464] focus:outline-none focus:ring-2 focus:ring-[#1a1464]/20"
+                onKeyDown={(e) => e.key === 'Enter' && handleGetStarted()}
+                className="w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 sm:px-4 py-2.5 sm:py-3 pr-10 text-sm sm:text-base text-gray-700 focus:border-[#1a1464] focus:outline-none focus:ring-2 focus:ring-[#1a1464]/20 transition-colors"
               >
                 <option value="">Property Type</option>
                 <option value="land">Land</option>
@@ -72,10 +110,16 @@ export default function Hero() {
 
             {/* Price Range Dropdown */}
             <div className="relative">
+              <label htmlFor="price-range-dropdown" className="sr-only">
+                Choose a price range
+              </label>
               <select
+                id="price-range-dropdown"
+                aria-label="Choose a price range"
                 value={priceRange}
                 onChange={(e) => setPriceRange(e.target.value)}
-                className="w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 sm:px-4 py-2.5 sm:py-3 pr-10 text-sm sm:text-base text-gray-700 focus:border-[#1a1464] focus:outline-none focus:ring-2 focus:ring-[#1a1464]/20"
+                onKeyDown={(e) => e.key === 'Enter' && handleGetStarted()}
+                className="w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 sm:px-4 py-2.5 sm:py-3 pr-10 text-sm sm:text-base text-gray-700 focus:border-[#1a1464] focus:outline-none focus:ring-2 focus:ring-[#1a1464]/20 transition-colors"
               >
                 <option value="">Price Range</option>
                 <option value="0-50000">$0 - $50,000</option>
@@ -90,9 +134,20 @@ export default function Hero() {
             {/* Get Started Button */}
             <button
               onClick={handleGetStarted}
-              className="rounded-lg bg-[#1a1464] px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white transition-all hover:bg-[#252080] focus:outline-none focus:ring-2 focus:ring-[#1a1464]/50 active:scale-95"
+              disabled={isLoading}
+              className="rounded-lg bg-[#1a1464] px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white transition-all hover:bg-[#252080] focus:outline-none focus:ring-2 focus:ring-[#1a1464]/50 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Get Started
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Searching...
+                </>
+              ) : (
+                <>
+                  <Search className="w-4 h-4" />
+                  Get Started
+                </>
+              )}
             </button>
           </div>
         </div>
