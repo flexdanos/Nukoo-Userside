@@ -1,6 +1,10 @@
 import { Home, Building2, TrendingUp, MapPin } from "lucide-react";
 
-export default function Stats() {
+interface StatsProps {
+  showIcons?: boolean;
+}
+
+export default function Stats({ showIcons = true }: StatsProps) {
   const stats = [
     {
       icon: Home,
@@ -35,10 +39,12 @@ export default function Stats() {
                 key={index}
                 className="flex flex-col items-center text-center"
               >
-                {/* Icon Circle */}
-                <div className="mb-4 flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-[#1a1464] shadow-lg">
-                  <Icon className="h-8 w-8 sm:h-10 sm:w-10 text-white" strokeWidth={2} />
-                </div>
+                {/* Icon Circle - only show if showIcons is true */}
+                {showIcons && (
+                  <div className="mb-4 flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-[#1a1464] shadow-lg">
+                    <Icon className="h-8 w-8 sm:h-10 sm:w-10 text-white" strokeWidth={2} />
+                  </div>
+                )}
 
                 {/* Value */}
                 <h3 className="mb-2 text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">

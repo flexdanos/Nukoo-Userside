@@ -1,12 +1,20 @@
+import ContactUs from "~/components/ContactUs";
+import PageHero from "../components/PageHero";
+import MapDisplay from "~/components/MapDisplay";
+import FAQ from "~/components/FAQ";
+
 export default function ContactPage() {
   return (
-    <div className="py-16">
-      <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-4xl font-bold text-gray-800 mb-8">Contact Us</h1>
-        <p className="text-lg text-gray-600">
-          Get in touch with our team for personalized assistance with your real estate needs.
-        </p>
-      </div>
-    </div>
+    <>
+      <PageHero 
+        title="Contact Us"
+        subtitle="Get in touch with our team for personalized assistance"
+        backgroundImage="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=1200&auto=format&fit=crop"
+        backgroundImageAlt="Modern office building for contact information"
+      />
+      <ContactUs/>
+      <MapDisplay/>
+      <FAQ/>
+    </>
   );
 }

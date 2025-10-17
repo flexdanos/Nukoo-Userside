@@ -99,7 +99,7 @@ export default function PropertyCard({
         {/* View Details Button */}
         <button 
           onClick={() => onViewDetails(id)}
-          className="w-full bg-[#1a1464] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#252080] transition-colors duration-200 flex items-center justify-center gap-2"
+          className="w-full border-2 border-[#1a1464] text-[#1a1464] py-3 px-4 rounded-lg font-medium hover:bg-[#1a1464] hover:text-white transition-colors duration-200 flex items-center justify-center gap-2"
         >
           View Details
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
