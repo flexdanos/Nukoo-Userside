@@ -109,15 +109,6 @@ export default function ServicesPage() {
       />
       <div className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">What We Offer</h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Discover our comprehensive range of real estate services tailored to your needs.
-              From property development to construction management, we provide end-to-end 
-              solutions for all your real estate requirements.
-            </p>
-          </div>
-
           {/* Services Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service) => (
