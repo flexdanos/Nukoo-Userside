@@ -1,33 +1,44 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { env } from '../config/env';
 
-// Define your base URL - update this to your actual API endpoint
-const BASE_URL = 'https://jsonplaceholder.typicode.com';
-
-// Define types for our test data
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  username: string;
+// Define types for company config
+export interface CompanyConfig {
+  _id: string;
+  stats: {
+    propertiesSold: number;
+    activeListings: number;
+    clientSatisfaction: number;
+    yearsOfExperience: number;
+  };
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Create the API slice with RTK Query
 export const api = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
-  tagTypes: ['User'], // Add your tag types here for cache invalidation
+  baseQuery: fetchBaseQuery({ 
+    baseUrl: env.API_BASE_URL,
+    timeout: env.API_TIMEOUT,
+    prepareHeaders: (headers) => {
+      // Add any required headers here
+      headers.set('Content-Type', 'application/json');
+      return headers;
+    },
+  }),
+  tagTypes: ['CompanyConfig'], // Add your tag types here for cache invalidation
   endpoints: (builder) => ({
-    // Test endpoint using JSONPlaceholder API
-    getUsers: builder.query<User[], void>({
-      query: () => '/users',
-      providesTags: ['User'],
+    // Company config endpoint
+    getCompanyConfig: builder.query<CompanyConfig, void>({
+      query: () => '/company/config',
+      providesTags: ['CompanyConfig'],
     }),
-    getUserById: builder.query<User, number>({
-      query: (id) => `/users/${id}`,
-      providesTags: (result, error, id) => [{ type: 'User', id }],
-    }),
+   
   }),
 });
 
 // Export hooks for usage in components
-export const { useGetUsersQuery, useGetUserByIdQuery } = api;
+export const { 
+  useGetCompanyConfigQuery
+} = api;
