@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Search, Filter } from "lucide-react";
 
 interface PropertyFiltersProps {
@@ -7,6 +6,9 @@ interface PropertyFiltersProps {
   onSortFilter: (sort: string) => void;
   onMoreFilters: () => void;
   totalProperties: number;
+  currentTypeFilter: string;
+  currentSortBy: string;
+  currentSearchQuery: string;
 }
 
 export default function PropertyFilters({
@@ -14,27 +16,23 @@ export default function PropertyFilters({
   onTypeFilter,
   onSortFilter,
   onMoreFilters,
-  totalProperties
+  totalProperties,
+  currentTypeFilter,
+  currentSortBy,
+  currentSearchQuery
 }: PropertyFiltersProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [propertyType, setPropertyType] = useState("All Types");
-  const [sortBy, setSortBy] = useState("Newest First");
-
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
-    setSearchQuery(query);
     onSearch(query);
   };
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const type = e.target.value;
-    setPropertyType(type);
     onTypeFilter(type);
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const sort = e.target.value;
-    setSortBy(sort);
     onSortFilter(sort);
   };
 
@@ -51,7 +49,7 @@ export default function PropertyFilters({
             <input
               type="text"
               placeholder="Search by property name or location..."
-              value={searchQuery}
+              value={currentSearchQuery}
               onChange={handleSearchChange}
               className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a1464] focus:border-transparent bg-white text-gray-700 placeholder-gray-400 text-sm sm:text-base"
             />
@@ -61,7 +59,7 @@ export default function PropertyFilters({
           <div className="flex flex-col sm:flex-row gap-3 w-full">
             {/* Property Type Filter */}
             <select
-              value={propertyType}
+              value={currentTypeFilter}
               onChange={handleTypeChange}
               className="flex-1 sm:min-w-[120px] px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a1464] focus:border-transparent bg-white text-gray-700 text-sm sm:text-base"
               aria-label="Filter by property type"
@@ -74,7 +72,7 @@ export default function PropertyFilters({
 
             {/* Sort Filter */}
             <select
-              value={sortBy}
+              value={currentSortBy}
               onChange={handleSortChange}
               className="flex-1 sm:min-w-[140px] px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a1464] focus:border-transparent bg-white text-gray-700 text-sm sm:text-base"
               aria-label="Sort properties"

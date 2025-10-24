@@ -4,121 +4,7 @@ import PropertyFilters from "./PropertyFilters";
 import PropertyDetails from "./PropertyDetails";
 import PageHero from "./PageHero";
 import PropertyCTA from "./PropertyCTA";
-
-interface Property {
-  id: string;
-  title: string;
-  location: string;
-  price: string;
-  category: 'Residential' | 'Land' | 'Commercial';
-  image: string;
-  details: string;
-  beds?: number;
-  baths?: number;
-  sqft?: number;
-  acres?: number;
-}
-
-const sampleProperties: Property[] = [
-  {
-    id: "1",
-    title: "Luxury Modern Villa",
-    location: "Dodowa",
-    price: "$2,450,000",
-    category: "Residential",
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1200&auto=format&fit=crop",
-    details: "Modern luxury villa with premium amenities",
-    beds: 5,
-    baths: 4,
-    sqft: 4500
-  },
-  {
-    id: "2",
-    title: "Residential Development Land",
-    location: "Oyarifa",
-    price: "$890,000",
-    category: "Land",
-    image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop",
-    details: "Prime development land ready for construction",
-    acres: 5.0
-  },
-  {
-    id: "3",
-    title: "Prime Commercial",
-    location: "Dodowa",
-    price: "$2,450,000",
-    category: "Commercial",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
-    details: "Prime commercial space in business district",
-    sqft: 12000
-  },
-  {
-    id: "4",
-    title: "Residential Development Land",
-    location: "Oyarifa",
-    price: "$890,000",
-    category: "Land",
-    image: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?q=80&w=1200&auto=format&fit=crop",
-    details: "Well-located land with development potential",
-    acres: 5.0
-  },
-  {
-    id: "5",
-    title: "Contemporary Family Home",
-    location: "Appolonia",
-    price: "$1,750,000",
-    category: "Residential",
-    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1200&auto=format&fit=crop",
-    details: "Beautiful family home in quiet neighborhood",
-    beds: 4,
-    baths: 3,
-    sqft: 3800
-  },
-  {
-    id: "6",
-    title: "Waterfront Development Land",
-    location: "Dodowa",
-    price: "$2,450,000",
-    category: "Land",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1200&auto=format&fit=crop",
-    details: "Exclusive waterfront land with stunning views",
-    acres: 12.0
-  },
-  {
-    id: "7",
-    title: "Luxury Modern Villa",
-    location: "Dodowa",
-    price: "$2,450,000",
-    category: "Residential",
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1200&auto=format&fit=crop",
-    details: "Modern luxury villa with premium amenities",
-    beds: 5,
-    baths: 4,
-    sqft: 4500
-  },
-  {
-    id: "8",
-    title: "Prime Commercial",
-    location: "Dodowa",
-    price: "$2,450,000",
-    category: "Commercial",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
-    details: "Prime commercial space in business district",
-    sqft: 12000
-  },
-  {
-    id: "9",
-    title: "Contemporary Family Home",
-    location: "Appolonia",
-    price: "$1,750,000",
-    category: "Residential",
-    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1200&auto=format&fit=crop",
-    details: "Beautiful family home in quiet neighborhood",
-    beds: 4,
-    baths: 3,
-    sqft: 3800
-  }
-];
+import { useGetCompanyPropertiesQuery, type Property as ApiProperty } from "../store/api";
 
 export default function PropertyListing() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -126,8 +12,38 @@ export default function PropertyListing() {
   const [sortBy, setSortBy] = useState("Newest First");
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
 
+  // API call to fetch properties - now reactive to filter changes
+  const { data: propertiesResponse, error, isLoading } = useGetCompanyPropertiesQuery({
+    sortBy: sortBy === "Price Low to High" ? "price" : 
+            sortBy === "Price High to Low" ? "price" : 
+            sortBy === "Most Popular" ? "createdAt" : "createdAt",
+    sortOrder: sortBy === "Price Low to High" ? "asc" : 
+               sortBy === "Price High to Low" ? "desc" : "desc",
+    type: typeFilter !== "All Types" ? typeFilter : undefined,
+    status: "available"
+  });
+
+  // Transform API data to match PropertyCard props
+  const transformedProperties = useMemo(() => {
+    if (!propertiesResponse) return [];
+    
+    return propertiesResponse.map((property: ApiProperty) => ({
+      id: property._id,
+      title: property.title,
+      location: `${property.location.city}, ${property.location.area}`,
+      price: `${property.currency} ${property.price.toLocaleString()}`,
+      category: property.type as 'Residential' | 'Land' | 'Commercial',
+      image: property.thumbnail || (property.images[0]?.url || ''),
+      details: property.description,
+      beds: property.bedrooms,
+      baths: property.bathrooms,
+      sqft: property.size,
+      acres: property.type === 'Land' ? property.size / 43560 : undefined // Convert sq ft to acres for land
+    }));
+  }, [propertiesResponse]);
+
   const filteredProperties = useMemo(() => {
-    let filtered = sampleProperties;
+    let filtered = transformedProperties;
 
     // Filter by search query
     if (searchQuery) {
@@ -137,38 +53,8 @@ export default function PropertyListing() {
       );
     }
 
-    // Filter by type
-    if (typeFilter !== "All Types") {
-      filtered = filtered.filter(property => property.category === typeFilter);
-    }
-
-    // Sort properties
-    switch (sortBy) {
-      case "Price Low to High":
-        filtered = [...filtered].sort((a, b) => {
-          const priceA = parseInt(a.price.replace(/[$,]/g, ''));
-          const priceB = parseInt(b.price.replace(/[$,]/g, ''));
-          return priceA - priceB;
-        });
-        break;
-      case "Price High to Low":
-        filtered = [...filtered].sort((a, b) => {
-          const priceA = parseInt(a.price.replace(/[$,]/g, ''));
-          const priceB = parseInt(b.price.replace(/[$,]/g, ''));
-          return priceB - priceA;
-        });
-        break;
-      case "Most Popular":
-        // For demo purposes, just reverse the order
-        filtered = [...filtered].reverse();
-        break;
-      default:
-        // Newest First - keep original order
-        break;
-    }
-
     return filtered;
-  }, [searchQuery, typeFilter, sortBy]);
+  }, [transformedProperties, searchQuery]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -197,7 +83,7 @@ export default function PropertyListing() {
 
   // If a property is selected, show the details view
   if (selectedPropertyId) {
-    const selectedProperty = sampleProperties.find(p => p.id === selectedPropertyId);
+    const selectedProperty = transformedProperties.find(p => p.id === selectedPropertyId);
     if (selectedProperty) {
       // Transform the property data to match PropertyDetails interface
       const propertyDetails = {
@@ -238,6 +124,57 @@ export default function PropertyListing() {
     }
   }
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <>
+        <PageHero 
+          title="Discover Premium Properties"
+          subtitle="Browse our extensive collection of residential, commercial, and land properties"
+          backgroundImage="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=1200&auto=format&fit=crop"
+          backgroundImageAlt="Classic house rooftops and architectural details"
+        />
+        <div className="bg-gray-50 min-h-screen">
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a1464] mx-auto"></div>
+              <div className="text-gray-600 mt-4">Loading properties...</div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <>
+        <PageHero 
+          title="Discover Premium Properties"
+          subtitle="Browse our extensive collection of residential, commercial, and land properties"
+          backgroundImage="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=1200&auto=format&fit=crop"
+          backgroundImageAlt="Classic house rooftops and architectural details"
+        />
+        <div className="bg-gray-50 min-h-screen">
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="text-center py-12">
+              <div className="text-red-600 text-lg mb-4">
+                Failed to load properties. Please try again later.
+              </div>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-[#1a1464] text-white px-6 py-3 rounded-lg hover:bg-[#0f0d3a] transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <PageHero 
@@ -254,6 +191,9 @@ export default function PropertyListing() {
           onSortFilter={handleSortFilter}
           onMoreFilters={handleMoreFilters}
           totalProperties={filteredProperties.length}
+          currentTypeFilter={typeFilter}
+          currentSortBy={sortBy}
+          currentSearchQuery={searchQuery}
         />
 
         {/* Properties Grid */}
