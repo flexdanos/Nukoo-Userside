@@ -4,9 +4,11 @@ import PremiumProperties from "../components/PremiumProperties";
 import WhyChooseUs from "../components/WhyChooseUs";
 import CallToAction from "../components/CallToAction";
 
+
 export default function HomePage() {
   return (
     <div>
+
       {/* Hero Section */}
       <Hero />
 
